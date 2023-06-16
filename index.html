@@ -1,0 +1,52 @@
+<html>
+
+<head>
+    <title>GraphQL Query Example</title>
+</head>
+
+<body>
+    <pre><code class="language-json" id="code"></code></pre>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.13.0/beautify.js"></script>
+    <script>
+        async function getBlogs(page) {
+            const data = JSON.stringify({
+                query: `query GetUserArticles($page: Int!) {
+                            user(username: "hemath") {
+                                publication {
+                                    posts(page: $page) {
+                                        title
+                                        brief
+                                        slug
+                                        coverImage
+                                    }
+                                }
+                            }
+                        }`,
+                variables: { page: page },
+            });
+
+            const response = await fetch('https://api.hashnode.com/',
+                {
+                    method: 'post',
+                    body: data,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Content-Length': data.length,
+                        'Authorization': 'a94b798f-635b-46a7-894b-669fa0fb9188',
+                    },
+                }
+            );
+
+            const json = await response.json();
+            document.getElementById('code').innerHTML += js_beautify(
+                JSON.stringify(json.data)
+            );
+        }
+
+        getBlogs(0)
+        getBlogs(1)
+
+    </script>
+</body>
+
+</html>
